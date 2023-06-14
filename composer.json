@@ -49,7 +49,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Mhassan654\\Uraefrisapi\\UraefrisapiServiceProvider"
+                "UraEfrisApiServiceProvider"
             ],
             "aliases": {
                 "Uraefrisapi": "Mhassan654\\Uraefrisapi\\UraefrisapiFacade"

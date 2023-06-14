@@ -4,7 +4,7 @@ namespace Mhassan654\Uraefrisapi;
 
 use Illuminate\Support\ServiceProvider;
 
-class UraefrisapiServiceProvider extends ServiceProvider
+class UraEfrisApiServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
