@@ -1,0 +1,59 @@
+{
+    "name": "mhassan654/uraefrisapi",
+    "description": "URA Efris api",
+    "keywords": [
+        "mhassan654",
+        "uraefrisapi"
+    ],
+    "homepage": "https://github.com/mhassan654/uraefrisapi",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "MUWONGE HASSAN",
+            "email": "hassansaava@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "illuminate/support": "^8.0",
+        "ext-json": "*",
+        "ext-http": "*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.27",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mhassan654\\Uraefrisapi\\": "src"
+        },
+        "files": [
+            "src/Helpers/TaxPayer.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mhassan654\\Uraefrisapi\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mhassan654\\Uraefrisapi\\UraefrisapiServiceProvider"
+            ],
+            "aliases": {
+                "Uraefrisapi": "Mhassan654\\Uraefrisapi\\UraefrisapiFacade"
+            }
+        }
+    }
+}
