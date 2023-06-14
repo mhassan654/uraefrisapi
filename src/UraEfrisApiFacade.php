@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @see \Mhassan654\Uraefrisapi\Skeleton\SkeletonClass
  */
-class UraefrisapiFacade extends Facade
+class UraEfrisApiFacade extends Facade
 {
     /**
      * Get the registered name of the component.

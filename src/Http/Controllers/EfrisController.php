@@ -2,6 +2,8 @@
 
 namespace Mhassan654\Uraefrisapi\Http\Controllers;
 
+use App\Models\EfrisProduct;
+use App\Models\KakasaCreditNote;
 use http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -1292,11 +1294,12 @@ public function QrCode(Request $request, $invoice_no)
     ]);
 }
 
-/**
- * List of credit notes/debit notes
- * @param Request $request
- * @return \Illuminate\Http\JsonResponse
- */
+    /**
+     * List of credit notes/debit notes
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws ErrorResponse
+     */
 public function T111(Request $request)
 {
     // Request Params
@@ -1395,7 +1398,7 @@ public function T114(Request $req, Response $res)
     }
 }
 
-public function T118(Request $req, Response $res, NextMiddleware $next)
+public function T118(Request $req, Response $res, LoggerMiddleware $next)
 {
     $noteId = $req->route('noteId');
 
@@ -1407,14 +1410,14 @@ public function T118(Request $req, Response $res, NextMiddleware $next)
 
     $response = Http::post(taxpayer::OFFLINE_SERVER_URL, $request_data);
 
-    AppLogger::userActivityLog($req, $response, $next);
+    $next::userActivityLog($req, $response, $next);
 
     try {
         if ($response->body()['returnStateInfo']['returnCode'] !== "00") {
-            return next(new errorResponse('Details of a specified Credit Note: ' . $response->body()['returnStateInfo']['returnMessage'], 200));
+            return new ErrorResponse('Details of a specified Credit Note: ' . $response->body()['returnStateInfo']['returnMessage'], 200);
         }
     } catch (\Exception $error) {
-        return next(new errorResponse('Details of a specified Credit Note: ' . $error, 200));
+        return new ErrorResponse('Details of a specified Credit Note: ' . $error, 200);
     }
 
     try {

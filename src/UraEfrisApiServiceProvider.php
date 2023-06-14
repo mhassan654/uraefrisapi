@@ -17,7 +17,7 @@ class UraEfrisApiServiceProvider extends ServiceProvider
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'uraefrisapi');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'uraefrisapi');
         // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
+         $this->loadRoutesFrom(__DIR__.'/../routes/efris.php');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -54,7 +54,7 @@ class UraEfrisApiServiceProvider extends ServiceProvider
 
         // Register the main class to use with the facade
         $this->app->singleton('uraefrisapi', function () {
-            return new Uraefrisapi;
+            return new UraEfrisApi;
         });
     }
 }

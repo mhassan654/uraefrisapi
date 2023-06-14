@@ -2,7 +2,7 @@
 
 namespace Mhassan654\Uraefrisapi;
 
-class Uraefrisapi
+class UraEfrisApi
 {
     // Build your next great package.
 }

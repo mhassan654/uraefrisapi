@@ -52,7 +52,7 @@
                 "UraEfrisApiServiceProvider"
             ],
             "aliases": {
-                "Uraefrisapi": "Mhassan654\\Uraefrisapi\\UraefrisapiFacade"
+                "Uraefrisapi": "UraEfrisApiFacade"
             }
         }
     }
