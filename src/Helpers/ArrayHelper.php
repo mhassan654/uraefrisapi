@@ -2,19 +2,22 @@
 
 namespace Mhassan654\Uraefrisapi\Helpers;
 
-class ArrayHelper {
+class ArrayHelper
+{
     /**
      * The sum of an array column
      *
-     * @param array $theArray
-     * @param string $theColumn
+     * @param  array  $theArray
+     * @param  string  $theColumn
      * @return float
      */
-    public static function getArraySum($theArray, $theColumn) {
+    public static function getArraySum($theArray, $theColumn)
+    {
         $sum = 0;
         foreach ($theArray as $item) {
             $sum += $item[$theColumn];
         }
-        return round((float)$sum, 2);
+
+        return round((float) $sum, 2);
     }
 }

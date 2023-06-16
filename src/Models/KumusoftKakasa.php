@@ -2,12 +2,10 @@
 
 namespace Mhassan654\Uraefrisapi\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class KumusoftKakasa extends Model
 {
-
     /**
      * The Current date and time
      *
@@ -21,9 +19,9 @@ class KumusoftKakasa extends Model
     /**
      * Prepare request data
      *
-     * @param string $content
-     * @param string $interface_code
-     * @param bool $is_encrypted
+     * @param  string  $content
+     * @param  string  $interface_code
+     * @param  bool  $is_encrypted
      * @return array
      */
     public static function prepareRequestData($content, $interface_code)
@@ -68,8 +66,8 @@ class KumusoftKakasa extends Model
     /**
      * Prepare increase request data
      *
-     * @param string $content
-     * @param string $interface_code
+     * @param  string  $content
+     * @param  string  $interface_code
      * @return array
      */
     public static function prepareIncreaseRequestData($content, $interface_code)
@@ -112,8 +110,8 @@ class KumusoftKakasa extends Model
     /**
      * Convert a Base64 encoded string into a normal string
      *
-     * @param string $content
-     * @param string $isZipped
+     * @param  string  $content
+     * @param  string  $isZipped
      * @return string
      */
     public static function base64Decode($content, $isZipped = '0')
@@ -121,6 +119,7 @@ class KumusoftKakasa extends Model
         if (intval($isZipped) === 1) {
             $buffer = base64_decode($content);
             $result = Zlib::unzip($buffer);
+
             return $result;
         } else {
             return base64_decode($content);
@@ -130,7 +129,7 @@ class KumusoftKakasa extends Model
     /**
      * Convert a normal string (JSON) to a base64 encoded string
      *
-     * @param string $content
+     * @param  string  $content
      * @return string
      */
     public static function base64Encode($content)
@@ -141,7 +140,7 @@ class KumusoftKakasa extends Model
     /**
      * Prepare items to be registered with URA
      *
-     * @param array $item
+     * @param  array  $item
      * @return array
      */
     public static function prepareInventoryData($item)
@@ -165,10 +164,11 @@ class KumusoftKakasa extends Model
                 'packageScaledValue' => $i['packageScaledValue'],
                 'pieceScaledValue' => $i['pieceScaledValue'],
                 'exciseDutyCode' => $i['exciseDutyCode'],
-                'haveOtherUnit' => !isset($i['haveOtherUnit']) || $i['havePieceUnit'] === '102' ? '102' : $i['haveOtherUnit'],
+                'haveOtherUnit' => ! isset($i['haveOtherUnit']) || $i['havePieceUnit'] === '102' ? '102' : $i['haveOtherUnit'],
                 'goodsOtherUnits' => $i['haveOtherUnit'] === '101' ? $i['goodsOtherUnits'] : [],
             ];
         }
+
         return $items;
     }
 
@@ -185,33 +185,35 @@ class KumusoftKakasa extends Model
     /**
      * Prepare invoice inquiry data
      *
-     * @param mixed $data
+     * @param  mixed  $data
      * @return mixed
      */
     public static function prepareInvoiceInquiryData($data)
     {
         $invoiceData = new KakasaInvoice($data, []);
+
         return $invoiceData->prepareInvoiceDetails($data);
     }
 
     /**
      * Prepare details of a credit note
      *
-     * @param mixed $basicInfo
-     * @param mixed $itemsBought
+     * @param  mixed  $basicInfo
+     * @param  mixed  $itemsBought
      * @return mixed
      */
     public static function prepareCreditNoteInfo($basicInfo, $itemsBought)
     {
         $fiscalNumber = $basicInfo['invoice_no'];
         $originalInvoice = KakasaInvoice::getEfrisInvoice($fiscalNumber);
+
         return $originalInvoice;
     }
 
     /**
      * Call a GET API
      *
-     * @param string $path
+     * @param  string  $path
      * @return mixed
      */
     public static function callGetAPI($path)
@@ -219,6 +221,7 @@ class KumusoftKakasa extends Model
         try {
             $response = Http::get($path);
             $result = $response->json();
+
             return $result;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
@@ -228,8 +231,8 @@ class KumusoftKakasa extends Model
     /**
      * Call a POST API
      *
-     * @param string $path
-     * @param mixed $attribs
+     * @param  string  $path
+     * @param  mixed  $attribs
      * @return mixed
      */
     public static function callPostAPI($path, $attribs)
@@ -237,10 +240,10 @@ class KumusoftKakasa extends Model
         try {
             $response = Http::post($path, $attribs);
             $result = $response->json();
+
             return $result;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
     }
 }
-

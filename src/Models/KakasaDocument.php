@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Mhassan654\Uraefrisapi\Helpers\ArrayHelper;
 use Mhassan654\Uraefrisapi\Models\EfrisInvoice;
 use Mhassan654\Uraefrisapi\Models\KakasaProduct;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 
 /**
  * Base class for all fiscalised documents
@@ -27,7 +26,7 @@ class KakasaDocument extends Model
     /**
      * Create an instance of a fiscal document
      *
-     * @param array $itemsBought Goods/services in this fiscal document
+     * @param  array  $itemsBought Goods/services in this fiscal document
      */
     public function __construct(array $itemsBought)
     {
@@ -47,6 +46,7 @@ class KakasaDocument extends Model
             $goods->orderNumber = $index;
             $itemsBought[] = $goods;
         }
+
         return $itemsBought;
     }
 
@@ -58,6 +58,7 @@ class KakasaDocument extends Model
     public function getTotalInvoiceProducts()
     {
         $products = $this->prepareProductDetails();
+
         return count($products);
     }
 
@@ -89,13 +90,13 @@ class KakasaDocument extends Model
                 'taxRateName' => 'VAT',
             ];
         }
+
         return $itemsBought;
     }
 
     /**
      * The total price for a good or service
      *
-     * @param KakasaProduct $goodorservice
      * @return float
      */
     public function getTotalPrice(KakasaProduct $goodorservice)
@@ -135,6 +136,7 @@ class KakasaDocument extends Model
             'remarks' => '',
             'qrCode' => '',
         ];
+
         return $summary;
     }
 
@@ -145,40 +147,43 @@ class KakasaDocument extends Model
      */
     public function getInvoiceDetails()
     {
-        $url = taxpayer::KUMUSOFT_MIDDLEWARE_URL . '/invoice-details/' . $this->generalInformation['invoice_no'];
+        $url = taxpayer::KUMUSOFT_MIDDLEWARE_URL.'/invoice-details/'.$this->generalInformation['invoice_no'];
         $response = Http::get($url);
+
         return $response->json();
     }
 
     /**
      * Find an invoice issued earlier via EFRIS
      *
-     * @param int $fiscalNumber
+     * @param  int  $fiscalNumber
      * @return mixed
      */
     public function getEfrisInvoice($fiscalNumber)
     {
         $invoice = EfrisInvoice::where('basicInformation.invoiceNo', $this->oriInvoiceNumber)->first();
+
         return $invoice;
     }
 
     /**
      * Generate a QR code as a base64 String from a given Text
      *
-     * @param string $qrText
+     * @param  string  $qrText
      * @return string
      */
     public static function generateQrCode($qrText)
     {
         $qR64Base = QRCode::toBase64($qrText);
+
         return $qR64Base;
     }
 
     /**
      * Generate the QrCode in a picture format
      *
-     * @param string $base64Text
-     * @param string $invoiceNo
+     * @param  string  $base64Text
+     * @param  string  $invoiceNo
      * @return bool
      */
     // public static function generateQrCodeImage($base64Text, $invoiceNo)

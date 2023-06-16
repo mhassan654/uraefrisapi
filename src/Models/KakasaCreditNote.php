@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class KakasaCreditNote extends Model
 {
     use HasFactory;
+
     /**
      * The original invoice number
      */
@@ -30,23 +31,33 @@ class KakasaCreditNote extends Model
 
     /*** reasonCode */
     public const REASONCODE_EXPIRED = 101;
+
     public const REASONCODE_CANCELLED = 102;
+
     public const REASONCODE_WRONG_AMOUNT = 103;
+
     public const REASONCODE_PARTIAL_WAIVEOFF = 104;
+
     public const REASONCODE_OTHERS = 105;
+
     /*** invoiceApplyCategoryCode */
     public const INVOICE_APPLY_CODE_CREDITNOTE = 101;
+
     /*** source */
     public const SOURCE_EFD = 101;
+
     public const SOURCE_CS = 102;
+
     public const SOURCE_WEBSERVICE = 103;
+
     public const SOURCE_BS = 104;
 
     /**
      * Create an instance of a credit note
-     * @param array $products
-     * @param array $info
-     * @param array $originalInvoice
+     *
+     * @param  array  $products
+     * @param  array  $info
+     * @param  array  $originalInvoice
      */
     public function __construct($products, $info, $originalInvoice)
     {
@@ -125,27 +136,27 @@ class KakasaCreditNote extends Model
 
             $prodservice = $productService;
             $goods = $localInvoiceDetails['goodsDetails'][$prodservice['OrderNumber'] ?? $prodservice['orderNumber']];
-            echo "Good or service" . $product['itemCode'], $goods; //invoice.goodsDetails)
-            $item_rate = $prodservice['taxRule'] ?? "URA";
+            echo 'Good or service'.$product['itemCode'], $goods; //invoice.goodsDetails)
+            $item_rate = $prodservice['taxRule'] ?? 'URA';
             $taxDetails = KakasaProduct::getProductTaxCategory($prodservice['itemCode'], $invoice['basicInformation']['invoiceIndustryCode'], $item_rate);
 
             $good_or_service = [
-                "item" => $goods['item'],
-                "orderNumber" => $prodservice['OrderNumber'] ?? $prodservice['orderNumber'],
-                "itemCode" => $goods['itemCode'],
-                "qty" => $this->toNegative(strval($prodservice['quantity'])),
-                "unitOfMeasure" => strval($goods['unitOfMeasure']),
-                "unitPrice" => strval($goods['unitPrice']),
-                "total" => $this->toNegative(strval($prodservice['quantity'] * $prodservice['unitPrice'])),
-                "taxRate" => $taxDetails['taxRate'],
-                "tax" => $this->toNegative(strval($this->getTaxAmount($prodservice['quantity'], $prodservice['unitPrice'], $taxDetails['taxRate']))),
-                "deemedFlag" => $goods['deemedFlag'],
-                "exciseFlag" => $goods['exciseFlag'],
-                "goodsCategoryId" => $goods['goodsCategoryId'],
-                "pack" => $goods['pack'],
+                'item' => $goods['item'],
+                'orderNumber' => $prodservice['OrderNumber'] ?? $prodservice['orderNumber'],
+                'itemCode' => $goods['itemCode'],
+                'qty' => $this->toNegative(strval($prodservice['quantity'])),
+                'unitOfMeasure' => strval($goods['unitOfMeasure']),
+                'unitPrice' => strval($goods['unitPrice']),
+                'total' => $this->toNegative(strval($prodservice['quantity'] * $prodservice['unitPrice'])),
+                'taxRate' => $taxDetails['taxRate'],
+                'tax' => $this->toNegative(strval($this->getTaxAmount($prodservice['quantity'], $prodservice['unitPrice'], $taxDetails['taxRate']))),
+                'deemedFlag' => $goods['deemedFlag'],
+                'exciseFlag' => $goods['exciseFlag'],
+                'goodsCategoryId' => $goods['goodsCategoryId'],
+                'pack' => $goods['pack'],
             ];
 
-            if ($goods['exciseFlag'] == "1") {
+            if ($goods['exciseFlag'] == '1') {
                 $good_or_service['categoryId'] = $goods['categoryId'];
                 $good_or_service['exciseRate'] = $goods['exciseRate'];
                 $good_or_service['exciseRule'] = $goods['exciseRule'];
@@ -176,18 +187,18 @@ class KakasaCreditNote extends Model
             $product = reset($product);
 
             $prodservice = $productService;
-            $item_rate = $prodservice['taxRule'] ?? "URA";
+            $item_rate = $prodservice['taxRule'] ?? 'URA';
             $taxDetails = KakasaProduct::getProductTaxCategory($prodservice['itemCode'], $invoice['basicInformation']['invoiceIndustryCode'], $item_rate);
 
             $itemsBought[] = [
-                "taxCategory" => $taxDetails['taxCategory'],
-                "taxCategoryCode" => $taxDetails['taxCategoryCode'],
-                "netAmount" => $this->toNegative(strval($this->getNetAmount($prodservice['quantity'], $prodservice['unitPrice'], $taxDetails['taxRate']))),
-                "taxRate" => $taxDetails['taxRate'],
-                "taxAmount" => $this->toNegative(strval($this->getTaxAmount($prodservice['quantity'], $prodservice['unitPrice'], $taxDetails['taxRate']))),
-                "grossAmount" => $this->toNegative(strval($this->getGrossAmount($prodservice['quantity'], $prodservice['unitPrice']))),
-                "exciseCurrency" => $product['exciseCurrency'],
-                "taxRateName" => $taxDetails['taxRateName'],
+                'taxCategory' => $taxDetails['taxCategory'],
+                'taxCategoryCode' => $taxDetails['taxCategoryCode'],
+                'netAmount' => $this->toNegative(strval($this->getNetAmount($prodservice['quantity'], $prodservice['unitPrice'], $taxDetails['taxRate']))),
+                'taxRate' => $taxDetails['taxRate'],
+                'taxAmount' => $this->toNegative(strval($this->getTaxAmount($prodservice['quantity'], $prodservice['unitPrice'], $taxDetails['taxRate']))),
+                'grossAmount' => $this->toNegative(strval($this->getGrossAmount($prodservice['quantity'], $prodservice['unitPrice']))),
+                'exciseCurrency' => $product['exciseCurrency'],
+                'taxRateName' => $taxDetails['taxRateName'],
             ];
         }
 
@@ -201,13 +212,13 @@ class KakasaCreditNote extends Model
     {
         $taxes = $this->getTaxDetails();
         $summary = [
-            "netAmount" => number_format(array_sum(array_column($taxes, 'netAmount')), 2),
-            "taxAmount" => number_format(array_sum(array_column($taxes, 'taxAmount')), 2),
-            "grossAmount" => number_format(array_sum(array_column($taxes, 'grossAmount')), 2),
-            "itemCount" => count($taxes),
-            "modeCode" => "1", //Issuing (0)Offline, or (1)Online?
-            "remarks" => $this->genInfo['remarks'],
-            "qrCode" => "",
+            'netAmount' => number_format(array_sum(array_column($taxes, 'netAmount')), 2),
+            'taxAmount' => number_format(array_sum(array_column($taxes, 'taxAmount')), 2),
+            'grossAmount' => number_format(array_sum(array_column($taxes, 'grossAmount')), 2),
+            'itemCount' => count($taxes),
+            'modeCode' => '1', //Issuing (0)Offline, or (1)Online?
+            'remarks' => $this->genInfo['remarks'],
+            'qrCode' => '',
         ];
 
         return $summary;
@@ -221,17 +232,20 @@ class KakasaCreditNote extends Model
     public function getNetAmount($quantity, $price, $taxRate)
     {
         $net = ($quantity * $price) / ($taxRate + 1);
-        return ($taxRate === "-") ? ($quantity * $price) : (float)number_format($net, 2);
+
+        return ($taxRate === '-') ? ($quantity * $price) : (float) number_format($net, 2);
     }
 
     public function getTaxAmount($quantity, $price, $taxRate)
     {
         $tax = ($quantity * $price) - $this->getNetAmount($quantity, $price, $taxRate);
-        return ($taxRate === "-") ? (0) : (float)number_format($tax, 2);
+
+        return ($taxRate === '-') ? (0) : (float) number_format($tax, 2);
     }
 
     /**
      * Convert a number to negative
+     *
      * @param {*} input
      */
     public function toNegative($input)
@@ -241,7 +255,8 @@ class KakasaCreditNote extends Model
 
     /**
      * Find a product (good/service) already registered in EFRIS
-     * @param string $code
+     *
+     * @param  string  $code
      * @return mixed
      */
     public function getEfrisProduct($code)

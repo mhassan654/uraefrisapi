@@ -18,12 +18,7 @@
     "require": {
         "php": "^7.4|^8.0",
         "illuminate/support": "^8.0",
-        "ext-json": "*",
-        "ext-http": "*"
-    },
-    "require-dev": {
-        "orchestra/testbench": "^6.27",
-        "phpunit/phpunit": "^9.0"
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {
@@ -38,14 +33,6 @@
             "Mhassan654\\Uraefrisapi\\Tests\\": "tests"
         }
     },
-    "scripts": {
-        "test": "vendor/bin/phpunit",
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
-
-    },
-    "config": {
-        "sort-packages": true
-    },
     "extra": {
         "laravel": {
             "providers": [
@@ -56,4 +43,6 @@
             }
         }
     }
+
+
 }

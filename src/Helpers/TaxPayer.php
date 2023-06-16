@@ -1,4 +1,5 @@
 <?php
+
 return [
     'DEVICE_NO' => env('DEVICE_NO'),
     'TIN' => env('TIN'),
@@ -22,7 +23,7 @@ return [
     'DATA_SOURCE' => env('DATA_SOURCE', 203),
     'USERNAME' => env('USERNAME', 'admin'),
     'VERSION' => env('VERSION', '1.1.20191201'),
-    'KUMUSOFT_MIDDLEWARE_URL' => env('KUMUSOFT_MIDDLEWARE_URL', 'http://localhost:' . env('KAKASAPORT', 3000)),
+    'KUMUSOFT_MIDDLEWARE_URL' => env('KUMUSOFT_MIDDLEWARE_URL', 'http://localhost:'.env('KAKASAPORT', 3000)),
     'OFFLINE_SERVER_URL' => env('OFFLINE_SERVER_URL', 'http://127.0.0.1:9880/efristcs/ws/tcsapp/getInformation'),
     'OFFLINE_SERVER_INFO' => env('OFFLINE_SERVER_INFO', 'http://127.0.0.1:9880/efristcs/ws/tcsapp/tcsInfo'),
     'DATE_FORMART' => env('DATE_FORMART', 'dd/MM/yyyy'),

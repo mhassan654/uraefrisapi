@@ -14,7 +14,7 @@ class EfrisInvoice
         'payWay',
         'sellerDetails',
         'summary',
-        'taxDetails'
+        'taxDetails',
     ];
 
     protected $casts = [
@@ -25,7 +25,6 @@ class EfrisInvoice
         'payWay' => 'array',
         'sellerDetails' => 'array',
         'summary' => 'array',
-        'taxDetails' => 'array'
+        'taxDetails' => 'array',
     ];
-
 }
