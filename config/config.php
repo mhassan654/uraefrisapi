@@ -4,7 +4,7 @@
  * You can place your custom package configuration in here.
  */
 return [
-    'DEVICE_NO' => env('DEVICE_NO'),
+    'taxpayer'=>['DEVICE_NO' => env('DEVICE_NO'),
     'TIN' => env('TIN'),
     'IS_VAT_REGISTERED' => env('IS_VAT_REGISTERED', 101),
     'LEGAL_NAME' => env('LEGAL_NAME'),
@@ -26,11 +26,11 @@ return [
     'DATA_SOURCE' => env('DATA_SOURCE', 203),
     'USERNAME' => env('USERNAME', 'admin'),
     'VERSION' => env('VERSION', '1.1.20191201'),
-    'KUMUSOFT_MIDDLEWARE_URL' => env('KUMUSOFT_MIDDLEWARE_URL', 'http://localhost:' . env('KAKASAPORT', 3000)),
+    'KUMUSOFT_MIDDLEWARE_URL' => env('KUMUSOFT_MIDDLEWARE_URL', 'http://localhost:'.env('KAKASAPORT', 3000)),
     'OFFLINE_SERVER_URL' => env('OFFLINE_SERVER_URL', 'http://127.0.0.1:9880/efristcs/ws/tcsapp/getInformation'),
     'OFFLINE_SERVER_INFO' => env('OFFLINE_SERVER_INFO', 'http://127.0.0.1:9880/efristcs/ws/tcsapp/tcsInfo'),
     'DATE_FORMART' => env('DATE_FORMART', 'dd/MM/yyyy'),
     'TIME_FORMART' => env('TIME_FORMART', 'dd/MM/yyyy HH:mm:ss'),
     'creditNoteValuePercentLimit' => env('creditNoteValuePercentLimit', '0.6'),
-    'creditNoteMaximumInvoicingDays' => env('creditNoteMaximumInvoicingDays', '100'),
+    'creditNoteMaximumInvoicingDays' => env('creditNoteMaximumInvoicingDays', '100'),]
 ];

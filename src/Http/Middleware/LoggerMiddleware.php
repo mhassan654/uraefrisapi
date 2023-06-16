@@ -2,12 +2,12 @@
 
 namespace Mhassan654\Uraefrisapi\Http\Middleware;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Support\Facades\Http;
-use Mhassan654\Uraefrisapi\Models\ActivityLog;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Mhassan654\Uraefrisapi\Exceptions\ErrorResponse;
+use Mhassan654\Uraefrisapi\Models\ActivityLog;
 use Mhassan654\Uraefrisapi\Models\KumusoftKakasa;
 
 class LoggerMiddleware
@@ -23,7 +23,7 @@ class LoggerMiddleware
             'api_endpoint' => $_requestedUrl,
             'ip_address' => $ip,
             'request_time' => $requestTime,
-            'api_client' => 'postman'
+            'api_client' => 'postman',
         ]);
 
         //save activity log, to file
@@ -32,7 +32,10 @@ class LoggerMiddleware
         return $next($request);
     }
 
-    public static function userActivityLog($request, $response, $next)
+    /**
+     * @throws ErrorResponse
+     */
+    public static function userActivityLog($request, $response, Closure $next)
     {
         $request_data = KumusoftKakasa::prepareRequestData('', 'T103');
         $ipAddress = $request->headers->get('cf-connecting-ip') ?: $request->headers->get('x-forwarded-for') ?: $request->ip();
@@ -46,11 +49,11 @@ class LoggerMiddleware
         $response = Http::post(config('taxpayer.OFFLINE_SERVER_URL'), $request_data);
 
         try {
-            if (!$response->json('returnStateInfo.returnCode') === '00') {
-                throw new ErrorResponse('UserDetails details Error: ' . $response->json('returnStateInfo.returnMessage'), 404);
+            if (! $response->json('returnStateInfo.returnCode') === '00') {
+                throw new ErrorResponse('UserDetails details Error: '.$response->json('returnStateInfo.returnMessage'), 404);
             }
         } catch (\Exception $e) {
-            throw new ErrorResponse('Error: ' . $e->getMessage(), 404);
+            throw new ErrorResponse('Error: '.$e->getMessage(), 404);
         }
 
         $data = json_decode(KumusoftKakasa::base64Decode($response->json('data.content')));
@@ -66,8 +69,8 @@ class LoggerMiddleware
             'client' => $_requestClient,
             'response' => [
                 'returnCode' => $returnCode,
-                'returnMessage' => $returnMessage
-            ]
+                'returnMessage' => $returnMessage,
+            ],
         ]);
 
         //save activity log to file

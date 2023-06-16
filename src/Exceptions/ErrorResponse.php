@@ -18,5 +18,4 @@ class ErrorResponse extends Exception
     {
         return $this->statusCode;
     }
-
 }

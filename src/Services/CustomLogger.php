@@ -2,10 +2,9 @@
 
 namespace Mhassan654\Uraefrisapi\Services;
 
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Monolog\Formatter\LineFormatter;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
 
@@ -23,14 +22,14 @@ class CustomLogger
         $fileSizeToRotate = 1 * 1024 * 1024; // in bytes
 
         // Create the log directory if it does not exist
-        if (!is_dir($logDir)) {
+        if (! is_dir($logDir)) {
             mkdir($logDir, 0755, true);
         }
 
         $logger = new Logger($config['name']);
 
         // Add a daily rotate file handler
-        $handler = new RotatingFileHandler($logDir . '/' . $config['name'] . '-' . date('Y-m-d') . '.log', $numberOfDaysToKeepLog, $config['level'], true, null, true, $fileSizeToRotate);
+        $handler = new RotatingFileHandler($logDir.'/'.$config['name'].'-'.date('Y-m-d').'.log', $numberOfDaysToKeepLog, $config['level'], true, null, true, $fileSizeToRotate);
         $handler->setFilenameFormat('{date}-{filename}', 'Y-m-d');
         $handler->setFormatter(new LineFormatter(null, null, true, true));
         $logger->pushHandler($handler);
