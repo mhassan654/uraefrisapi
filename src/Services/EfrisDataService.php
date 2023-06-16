@@ -1366,7 +1366,7 @@ class EfrisDataService
         }
     }
 
-    public function T114(Request $req)
+    public function T114(Request $req): JsonResponse
     {
         $data = [
             'oriInvoiceId' => $req->input('oriInvoiceId'),
@@ -1394,7 +1394,7 @@ class EfrisDataService
         }
     }
 
-    public function T118(Request $req, Response $res, LoggerMiddleware $next)
+    public function T118(Request $req, LoggerMiddleware $next)
     {
         $noteId = $req->route('noteId');
 
