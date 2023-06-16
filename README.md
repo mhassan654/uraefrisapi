@@ -1,4 +1,4 @@
-# Very short description of the package
+# Package installation details
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mhassan654/uraefrisapi.svg?style=flat-square)](https://packagist.org/packages/mhassan654/uraefrisapi)
 [![Total Downloads](https://img.shields.io/packagist/dt/mhassan654/uraefrisapi.svg?style=flat-square)](https://packagist.org/packages/mhassan654/uraefrisapi)
@@ -18,6 +18,9 @@ composer require mhassan654/uraefrisapi
 
 ```php
 // Usage description here
+Publish our package configuration file.
+run php artisan vendor:publish --provider="Mhassan654\Uraefrisapi\UraEfrisApiServiceProvider" --tag="config"
+
 ```
 
 ### Testing
