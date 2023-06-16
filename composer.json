@@ -27,6 +27,21 @@
         "files": [
             "src/Helpers/TaxPayer.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mhassan654\\Uraefrisapi\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mhassan654\\Uraefrisapi\\UraefrisapiServiceProvider"
+            ],
+            "aliases": {
+                "Uraefrisapi": "Mhassan654\\Uraefrisapi\\UraefrisapiFacade"
+            }
+        }
     }
 
 
