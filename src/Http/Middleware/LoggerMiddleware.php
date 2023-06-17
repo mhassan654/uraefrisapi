@@ -35,7 +35,7 @@ class LoggerMiddleware
     /**
      * @throws ErrorResponse
      */
-    public static function userActivityLog($request, $response, Closure $next)
+    public static function userActivityLog($request, $response)
     {
         $request_data = KumusoftKakasa::prepareRequestData('', 'T103');
         $ipAddress = $request->headers->get('cf-connecting-ip') ?: $request->headers->get('x-forwarded-for') ?: $request->ip();
@@ -46,7 +46,7 @@ class LoggerMiddleware
         $returnCode = $response->json('returnStateInfo.returnCode');
         $returnMessage = $response->json('returnStateInfo.returnMessage');
 
-        $response = Http::post(config('taxpayer.OFFLINE_SERVER_URL'), $request_data);
+        $response = Http::post(config('uraefrisapi.taxpayer.OFFLINE_SERVER_URL'), $request_data);
 
         try {
             if (! $response->json('returnStateInfo.returnCode') === '00') {
@@ -59,7 +59,7 @@ class LoggerMiddleware
         $data = json_decode(KumusoftKakasa::base64Decode($response->json('data.content')));
 
         //Logger Object
-        $logs = new Log([
+        $logs = new ActivityLog([
             'endPoint' => $_requestedUrl,
             'requestMethod' => $_requestMethod,
             'requestBody' => $_requestBody,
@@ -74,8 +74,8 @@ class LoggerMiddleware
         ]);
 
         //save activity log to file
-        logger()->info(json_encode($logs));
+        Log::info(json_encode($logs));
 
-        return $next($request, $response);
+        // return $next($request, $response);
     }
 }

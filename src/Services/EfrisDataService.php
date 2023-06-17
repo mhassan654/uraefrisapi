@@ -45,14 +45,14 @@ class EfrisDataService
      * @return JsonResponse
      * @throws ErrorResponse
      */
-    public function T126(Request $request): JsonResponse
+    public function T126(): JsonResponse
     {
         $requestData = KumusoftKakasa::prepareRequestData('', 'T126');
 
         $response = Http::post(config('uraefrisapi.taxpayer.OFFLINE_SERVER_URL'), $requestData);
 
         // logging endpoint
-        LoggerMiddleware::userActivityLog($request, $response);
+        LoggerMiddleware::userActivityLog($requestData, $response);
 
         if (! $response->json('returnStateInfo.returnCode') === '00') {
             throw new ErrorResponse('All Exchange Rates Error: '.$response->json('returnStateInfo.returnMessage'), 200);
@@ -77,7 +77,7 @@ class EfrisDataService
      * @return JsonResponse     *
      * @throws ErrorResponse
      */
-    public function T101(Request $request): JsonResponse
+    public function T101(): JsonResponse
     {
         $request_data = KumusoftKakasa::prepareRequestData('', 'T101');
 
@@ -124,7 +124,7 @@ class EfrisDataService
 
         try {
             $decodedResponse = json_decode(KumusoftKakasa::base64Decode($response->json('data.content'), $response->json('data.dataDescription.zipCode')), true);
-            store()->put($decodedResponse['basicInformation']['invoiceNo'], $decodedResponse);
+            // store()->put($decodedResponse['basicInformation']['invoiceNo'], $decodedResponse);
             ////console.log("Invoice saved to DB", store()->get($decodedResponse['basicInformation']['invoiceNo']))
             return response()->json([
                 'status' => $response->json('returnStateInfo'),
@@ -148,7 +148,7 @@ class EfrisDataService
      * @return JsonResponse
      * @throws ErrorResponse
      */
-    public function T103(Request $request): JsonResponse
+    public function T103(): JsonResponse
     {
         $request_data = KumusoftKakasa::prepareRequestData('', 'T103');
 
