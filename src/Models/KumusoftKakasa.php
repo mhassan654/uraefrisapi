@@ -3,6 +3,7 @@
 namespace Mhassan654\Uraefrisapi\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Http;
 
 class KumusoftKakasa extends Model
 {
@@ -39,22 +40,22 @@ class KumusoftKakasa extends Model
                 ],
             ],
             'globalInfo' => [
-                'appId' => Taxpayer::APP_ID,
-                'brn' => Taxpayer::BRN,
-                'dataExchangeId' => Taxpayer::DATA_EXCHANGE_ID,
-                'deviceMAC' => Taxpayer::DEVICE_MAC,
-                'deviceNo' => Taxpayer::DEVICE_NO,
+                'appId' => config('uraefrisapi.taxpayer.APP_ID'),
+                'brn' => config('uraefrisapi.taxpayer.BRN'),
+                'dataExchangeId' => config('uraefrisapi.taxpayer.DATA_EXCHANGE_ID'),
+                'deviceMAC' => config('uraefrisapi.taxpayer.DEVICE_MAC'),
+                'deviceNo' => config('uraefrisapi.taxpayer.DEVICE_NO'),
                 'extendField' => null,
-                'longitude' => Taxpayer::LONGITUDE,
-                'latitude' => Taxpayer::LATITUDE,
+                'longitude' => config('uraefrisapi.taxpayer.LONGITUDE'),
+                'latitude' => config('uraefrisapi.taxpayer.LATITUDE'),
                 'interfaceCode' => $interface_code,
-                'requestCode' => Taxpayer::REQUEST_CODE,
-                'requestTime' => self::currentDateAndTime(),
-                'responseCode' => Taxpayer::RESPONSE_CODE,
-                'taxpayerID' => Taxpayer::TAXPAYER_ID,
-                'tin' => Taxpayer::TIN,
-                'userName' => Taxpayer::USERNAME,
-                'version' => Taxpayer::VERSION,
+                'requestCode' => config('uraefrisapi.taxpayer.REQUEST_CODE'),
+                'requestTime' => $content['stockInDate'] != null ? $content['stockInDate'] : self::currentDateAndTime(),
+                'responseCode' => config('uraefrisapi.taxpayer.RESPONSE_CODE'),
+                'taxpayerID' => config('uraefrisapi.taxpayer.TAXPAYER_ID'),
+                'tin' => config('uraefrisapi.taxpayer.TIN'),
+                'userName' => config('uraefrisapi.taxpayer.USERNAME'),
+                'version' => config('uraefrisapi.taxpayer.VERSION'),
             ],
             'returnStateInfo' => [
                 'returnCode' => '',
@@ -83,22 +84,22 @@ class KumusoftKakasa extends Model
                 ],
             ],
             'globalInfo' => [
-                'appId' => Taxpayer::APP_ID,
-                'brn' => Taxpayer::BRN,
-                'dataExchangeId' => Taxpayer::DATA_EXCHANGE_ID,
-                'deviceMAC' => Taxpayer::DEVICE_MAC,
-                'deviceNo' => Taxpayer::DEVICE_NO,
+                'appId' => config('uraefrisapi.taxpayer.APP_ID'),
+                'brn' => config('uraefrisapi.taxpayer.BRN'),
+                'dataExchangeId' => config('uraefrisapi.taxpayer.DATA_EXCHANGE_ID'),
+                'deviceMAC' => config('uraefrisapi.taxpayer.DEVICE_MAC'),
+                'deviceNo' => config('uraefrisapi.taxpayer.DEVICE_NO'),
                 'extendField' => null,
-                'longitude' => Taxpayer::LONGITUDE,
-                'latitude' => Taxpayer::LATITUDE,
+                'longitude' => config('uraefrisapi.taxpayer.LONGITUDE'),
+                'latitude' => config('uraefrisapi.taxpayer.LATITUDE'),
                 'interfaceCode' => $interface_code,
-                'requestCode' => Taxpayer::REQUEST_CODE,
+                'requestCode' => config('uraefrisapi.taxpayer.REQUEST_CODE'),
                 'requestTime' => $content['stockInDate'] != null ? $content['stockInDate'] : self::currentDateAndTime(),
-                'responseCode' => Taxpayer::RESPONSE_CODE,
-                'taxpayerID' => Taxpayer::TAXPAYER_ID,
-                'tin' => Taxpayer::TIN,
-                'userName' => Taxpayer::USERNAME,
-                'version' => Taxpayer::VERSION,
+                'responseCode' => config('uraefrisapi.taxpayer.RESPONSE_CODE'),
+                'taxpayerID' => config('uraefrisapi.taxpayer.TAXPAYER_ID'),
+                'tin' => config('uraefrisapi.taxpayer.TIN'),
+                'userName' => config('uraefrisapi.taxpayer.USERNAME'),
+                'version' => config('uraefrisapi.taxpayer.VERSION'),
             ],
             'returnStateInfo' => [
                 'returnCode' => '',
@@ -118,7 +119,7 @@ class KumusoftKakasa extends Model
     {
         if (intval($isZipped) === 1) {
             $buffer = base64_decode($content);
-            $result = Zlib::unzip($buffer);
+            $result =Zlib::unzip($buffer);
 
             return $result;
         } else {
@@ -190,7 +191,7 @@ class KumusoftKakasa extends Model
      */
     public static function prepareInvoiceInquiryData($data)
     {
-        $invoiceData = new KakasaInvoice($data, []);
+        $invoiceData = new KakasaInvoice($data);
 
         return $invoiceData->prepareInvoiceDetails($data);
     }

@@ -41,7 +41,6 @@ class EfrisDataService
     /**
      * All Exchange Rates
      *
-     * @param Request $request
      * @return JsonResponse
      * @throws ErrorResponse
      */
@@ -73,7 +72,6 @@ class EfrisDataService
      * The EFD time is synchronized with the server time.
      * Interface Code: T101
      *
-     * @param Request $request
      * @return JsonResponse     *
      * @throws ErrorResponse
      */
