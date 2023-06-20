@@ -38,11 +38,12 @@ class LoggerMiddleware
     public static function userActivityLog($request, $response)
     {
         $request_data = KumusoftKakasa::prepareRequestData('', 'T103');
-        $ipAddress = $request->headers->get('cf-connecting-ip') ?: $request->headers->get('x-forwarded-for') ?: $request->ip();
-        $_requestedUrl = $request->url();
-        $_requestBody = $request->all();
-        $_requestClient = $request->header('User-Agent');
-        $_requestMethod = $request->method();
+        // dd($response);
+        $ipAddress = $response->headers('cf-connecting-ip') ?: $response->headers('x-forwarded-for') ?: $request->ip();
+        $_requestedUrl = $response->header('url');
+        $_requestBody = $response->header('all');
+        $_requestClient = $response->header('User-Agent');
+        $_requestMethod = $response->header('method');
         $returnCode = $response->json('returnStateInfo.returnCode');
         $returnMessage = $response->json('returnStateInfo.returnMessage');
 
@@ -55,6 +56,8 @@ class LoggerMiddleware
         } catch (\Exception $e) {
             throw new ErrorResponse('Error: '.$e->getMessage(), 404);
         }
+
+        // dd($response->body());
 
         $data = json_decode(KumusoftKakasa::base64Decode($response->json('data.content')));
 

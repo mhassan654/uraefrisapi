@@ -2,6 +2,9 @@
 
 namespace Mhassan654\Uraefrisapi\Models;
 
+use Carbon\Carbon;
+use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Psr7\Utils;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Http;
 
@@ -14,7 +17,7 @@ class KumusoftKakasa extends Model
      */
     public static function currentDateAndTime()
     {
-        return now()->format('Y-m-d H:i:s');
+        return Carbon::now()->format('Y-m-d H:i:s');
     }
 
     /**
@@ -50,7 +53,7 @@ class KumusoftKakasa extends Model
                 'latitude' => config('uraefrisapi.taxpayer.LATITUDE'),
                 'interfaceCode' => $interface_code,
                 'requestCode' => config('uraefrisapi.taxpayer.REQUEST_CODE'),
-                'requestTime' => $content['stockInDate'] != null ? $content['stockInDate'] : self::currentDateAndTime(),
+                'requestTime' => $reqTime,
                 'responseCode' => config('uraefrisapi.taxpayer.RESPONSE_CODE'),
                 'taxpayerID' => config('uraefrisapi.taxpayer.TAXPAYER_ID'),
                 'tin' => config('uraefrisapi.taxpayer.TIN'),
@@ -119,9 +122,9 @@ class KumusoftKakasa extends Model
     {
         if (intval($isZipped) === 1) {
             $buffer = base64_decode($content);
-            $result =Zlib::unzip($buffer);
+            $stream = gzdecode($buffer);
 
-            return $result;
+            return $stream;
         } else {
             return base64_decode($content);
         }
