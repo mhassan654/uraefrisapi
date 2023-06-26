@@ -23,7 +23,6 @@ class KumusoftKakasa extends Model
     /**
      * Prepare request data
      *
-     * @param  string  $content
      * @param  string  $interface_code
      * @param  bool  $is_encrypted
      * @return array
@@ -34,7 +33,7 @@ class KumusoftKakasa extends Model
 
         return [
             'data' => [
-                'content' => $content === '' ? null : self::base64Encode(json_encode($content)),
+                'content' => $content == '' ? null : self::base64Encode(json_encode($content)),
                 'signature' => '',
                 'dataDescription' => [
                     'codeType' => '0',

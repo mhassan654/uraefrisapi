@@ -1,6 +1,5 @@
 <?php
-
-namespace App\Models;
+namespace Mhassan654\Uraefrisapi\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

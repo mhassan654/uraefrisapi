@@ -3,7 +3,6 @@
 namespace Mhassan654\Uraefrisapi\Services;
 
 use App\Models\EfrisProduct;
-use App\Models\KakasaCreditNote;
 use App\Models\UnspscCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Mhassan654\Uraefrisapi\Exceptions\ErrorResponse;
 use Mhassan654\Uraefrisapi\Http\Middleware\LoggerMiddleware;
+use Mhassan654\Uraefrisapi\Models\KakasaCreditNote;
 use Mhassan654\Uraefrisapi\Models\KakasaInvoice;
 use Mhassan654\Uraefrisapi\Models\KumusoftKakasa;
 
@@ -110,7 +110,7 @@ class EfrisDataService
      * @param $invoice
      * @return JsonResponse
      */
-    public function T108($invoice): JsonResponse
+    public function T108($invoice)
     {
         $content = [
             'invoiceNo' => $invoice,
@@ -278,12 +278,12 @@ class EfrisDataService
         $content = [
             'id' => $request->input('id'),
         ];
-        $request_data = KumusoftKakasa::prepareRequestData($content, 'T128');
+        $request_data = KumusoftKakasa::prepareRequestData($content, 'T128');       
 
-        $response = Http::post(config('taxpayer.OFFLINE_SERVER_URL'), $request_data);
+        $response = Http::post(config('uraefrisapi.taxpayer.OFFLINE_SERVER_URL'), $request_data);
 
         try {
-            if (!$response->json('returnStateInfo.returnCode') == '00') {
+            if ($response->json('returnStateInfo.returnCode') != '00') {
                 throw new ErrorResponse('Query the stock quantity by goods ID: ' . $response->json('returnStateInfo.returnMessage'), 200);
             }
         } catch (\Exception $e) {
@@ -327,7 +327,7 @@ class EfrisDataService
         $response = Http::post(config('uraefrisapi.taxpayer.OFFLINE_SERVER_URL'), $request_data);
 
         try {
-            if (!$response->json('returnStateInfo.returnCode') == '00') {
+            if ($response->json('returnStateInfo.returnCode') != '00') {
                 throw new ErrorResponse('Goods/Services query by product code: ' . $response->json('returnStateInfo.returnMessage'), 200);
             }
         } catch (\Exception $e) {
@@ -409,30 +409,30 @@ class EfrisDataService
             'verify' => false,
             'json' => true,
         ])->post(config('uraefrisapi.taxpayer.OFFLINE_SERVER_URL'), $request_data);
+        $body = json_decode($response,true);
 
         // Logging endpoint
-        LoggerMiddleware::userActivityLog($req, $response, function ($req, $res) {
-        });
+        LoggerMiddleware::userActivityLog($req, $response);
 
         try {
-            if (!$response->body['returnStateInfo']['returnCode'] === '00') {
-                return response()->json(['error' => "EFRIS Dictionary/Dropdowns: {$response->body['returnStateInfo']['returnMessage']}"], 200);
+            if ($body['returnStateInfo']['returnCode'] != '00') {
+                return response()->json(['error' => "EFRIS Dictionary/Dropdowns: {$body['returnStateInfo']['returnMessage']}"], 200);
             }
         } catch (\Exception $e) {
             return response()->json(['error' => "EFRIS Dictionary/Dropdowns: {$e->getMessage()}"], 200);
         }
 
         try {
-            $decodedContent = KumusoftKakasa::base64Decode($response->body['data']['content'], $response->body['data']['dataDescription']['zipCode']);
+            $decodedContent = KumusoftKakasa::base64Decode($body['data']['content'], $body['data']['dataDescription']['zipCode']);
             $content = json_decode($decodedContent, true);
 
             return response()->json([
-                'status' => $response->body['returnStateInfo'],
+                'status' => $body['returnStateInfo'],
                 'data' => $content,
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => $response->body['returnStateInfo'],
+                'status' => $body['returnStateInfo'],
                 'error' => $e->getMessage(),
             ]);
         }
@@ -455,45 +455,46 @@ class EfrisDataService
         $response = Http::post(config('uraefrisapi.taxpayer.OFFLINE_SERVER_URL'), $request_data);
 
         // Logging endpoint
-        LoggerMiddleware::userActivityLog($req, $response, function ($req, $res) {
-        });
+        LoggerMiddleware::userActivityLog($req, $response);
+        $body =json_decode($response,true);
+
+        // try {
+        //     if ($body['returnStateInfo']['returnCode'] != '00') {
+        //         return response()->json(['error' => "Register a product or Service: {$body['returnStateInfo']['returnMessage']}"], 200);
+        //     }
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => "Register a product or Service: {$e->getMessage()}"], 200);
+        // }
 
         try {
-            if (!$response->body['returnStateInfo']['returnCode'] == '00') {
-                return response()->json(['error' => "Register a product or Service: {$response->body['returnStateInfo']['returnMessage']}"], 200);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['error' => "Register a product or Service: {$e->getMessage()}"], 200);
-        }
-
-        try {
-            $decodedContent = KumusoftKakasa::base64Decode($response->body['data']['content'], $response->body['data']['dataDescription']['zipCode']);
-            Log::info($decodedContent);
+            $decodedContent = KumusoftKakasa::base64Decode($body['data']['content'], $body['data']['dataDescription']['zipCode']);
+            // Log::info($decodedContent);
 
             $feedback = json_decode($decodedContent, true);
 
             // Synchronize local products DB
             Log::info('FeedBack', $feedback);
+            // dd($feedback);
 
-            if (count($feedback) === 0) {
+            if (count($feedback) == 0) {
                 // If this was successful
                 Http::post(config('uraefrisapi.taxpayer.KUMUSOFT_MIDDLEWARE_URL') . '/sync-products');
 
                 // Feedback
                 return response()->json([
-                    'status' => $response->body['returnStateInfo'],
+                    'status' => $body['returnStateInfo'],
                     'data' => 'Product/Service Successfully added',
                 ]);
             } else {
                 // Feedback
                 return response()->json([
-                    'status' => $response->body['returnStateInfo'],
+                    'status' => $body['returnStateInfo'],
                     'data' => $feedback[0]['returnMessage'],
                 ]);
             }
         } catch (\Exception $e) {
             return response()->json([
-                'status' => $response->body['returnStateInfo'],
+                'status' => $body['returnStateInfo'],
                 'error' => $e->getMessage(),
             ]);
         }
@@ -632,12 +633,12 @@ class EfrisDataService
      * Create an Invoice or Receipt
      * Invoices for VAT registered taxpayers, Receipts for non-VAT registered taxpayers
      */
-    public function T109(Request $request): JsonResponse
+    public function T109(Request $request)
     {
         $data = $request->input('data');
 
         $EfrisInvoice = new KakasaInvoice($data);
-        $product = $EfrisInvoice::prepareInvoiceDetails($data);
+        $product = $EfrisInvoice->prepareInvoiceDetails($data);
 
         if ($product['hasErrors'] === 1) {
             unset($product['hasErrors']);
@@ -1110,12 +1111,10 @@ class EfrisDataService
         $invoice = $postedItems['generalInfo']['oriInvoiceNo'];
 
         // Pick the original invoice from URA
-        $original_invoice = function () use ($invoice) {
-            return Http::get(config('uraefrisapi.taxpayer.KUMUSOFT_MIDDLEWARE_URL') . '/invoice-details/' . $invoice)->json()['data'];
-        };
+        $original_invoice = json_decode($this->T108($invoice)->getContent(),true);
 
         // The Original invoice
-        $original_inv = $original_invoice();
+        $original_inv = $original_invoice;
 
         // Credit note info
         $creditNote = new KakasaCreditNote(
@@ -1124,28 +1123,31 @@ class EfrisDataService
             $original_inv
         );
 
+        dd($creditNote);
+
         // Post Data
         $note = $creditNote->buildCreditNote();
 
         $request_data = KumusoftKakasa::prepareRequestData($note, 'T110');
 
-        $response = Http::post(taxpayer::OFFLINE_SERVER_URL, $request_data);
+        $response = Http::post(config('uraefrisapi.taxpayer.OFFLINE_SERVER_URL'), $request_data);
+        $body =json_decode($response->body(),true);
 
         try {
             $decodedContent = KumusoftKakasa::base64Decode(
-                $response->body()['data']['content'],
-                $response->body()['data']['dataDescription']['zipCode']
+                $body['data']['content'],
+                $body['data']['dataDescription']['zipCode']
             );
 
             $parsedContent = json_decode($decodedContent, true);
 
             return response()->json([
-                'status' => $response->body()['returnStateInfo'],
+                'status' => $body['returnStateInfo'],
                 'data' => $parsedContent,
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
-                'status' => $response->body()['returnStateInfo'],
+                'status' => $body['returnStateInfo'],
                 'error' => $error->getMessage(),
             ], 200);
         }
@@ -1170,7 +1172,7 @@ class EfrisDataService
                 // Raw materials
                 'remarks' => $manufacturing['remarks'],
             ],
-            'goodsStockInItem' => EfrisProduct::prepareT131ProductList($manufacturing['rawMaterials']),
+            'goodsStockInItem' => \Mhassan654\Uraefrisapi\Models\EfrisProduct::prepareT131ProductList($manufacturing['rawMaterials']),
         ];
 
         // 2. Request data for the raw materials
@@ -1188,7 +1190,7 @@ class EfrisDataService
                 'productionBatchNo' => $manufacturing['productionBatchNo'],
                 'productionDate' => $manufacturing['productionDate'],
             ],
-            'goodsStockInItem' => EfrisProduct::prepareT131ProductList($manufacturing['finalProducts']),
+            'goodsStockInItem' => \Mhassan654\Uraefrisapi\Models\EfrisProduct::prepareT131ProductList($manufacturing['finalProducts']),
         ];
 
         // 4. Request data for the finished products
@@ -1245,6 +1247,7 @@ class EfrisDataService
         LoggerMiddleware::userActivityLog($request, $response);
 
         $body= json_decode($response->body(),true);
+        // dd($body);
 
         try {
             if ($body['returnStateInfo']['returnCode'] != '00') {
@@ -1287,9 +1290,10 @@ class EfrisDataService
 
         // Post Data
         $response = Http::post(config('uraefrisapi.taxpayer.OFFLINE_SERVER_URL'), $request_data);
+        $body= json_decode($response->body(),true);
 
         $invoice = json_decode(KumusoftKakasa::base64Decode($response->body()['data']['content'], $response->body()['data']['dataDescription']['zipCode']), true);
-        $qrCode = fiscalDocument . generateQrCode($invoice['summary']['qrCode']);
+        $qrCode = FiscalDocument::generateQrCode($invoice['summary']['qrCode']);
 
         // Generate the Image file
         // await fiscalDocument.generateQrCodeImage($qrCode, $invoice_no);
@@ -1423,8 +1427,9 @@ class EfrisDataService
         $request_data = KumusoftKakasa::prepareRequestData($content, 'T118');
 
         $response = Http::post(config('uraefrisapi.taxpayer.OFFLINE_SERVER_URL'), $request_data);
+        $body= json_decode($response->body(),true);
 
-        $next::userActivityLog($req, $response, $next);
+        $next::userActivityLog($req, $response);
 
         try {
             if ($response->body()['returnStateInfo']['returnCode'] !== '00') {

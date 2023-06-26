@@ -1,9 +1,10 @@
 <?php
+namespace Mhassan654\Uraefrisapi\Models;
 
-namespace App\Models;
-
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Log;
 
 class KakasaCreditNote extends Model
 {
@@ -52,6 +53,27 @@ class KakasaCreditNote extends Model
 
     public const SOURCE_BS = 104;
 
+    protected $fillable=[
+        'oriInvoiceId',
+        'oriInvoiceNo',
+        'reasonCode',
+        'reason',
+        'applicationTime',
+        'invoiceApplyCategoryCode',
+        'currency',
+        'contactName',
+        'contactMobileNum',
+        'contactEmail',
+        'source',
+        'remarks',
+        'sellersReferenceNo',
+        'taxDetails',
+        'summary',,
+        'goodsDetails',
+        ''
+
+    ];
+
     /**
      * Create an instance of a credit note
      *
@@ -65,7 +87,7 @@ class KakasaCreditNote extends Model
         $this->_productServices = $products;
         $this->genInfo = $info;
         $this->oriInvoiceNumber = $info['oriInvoiceNo'];
-        $this->taxpayer = Config::get('taxpayer'); // Assuming the taxpayer configuration is stored in the "config" directory
+        $this->taxpayer = config('uraefrisapi.taxpayer'); // Assuming the taxpayer configuration is stored in the "config" directory
         $this->oriInvoice = $originalInvoice;
         $this->oriInvoiceGoodsDetails = $originalInvoice['goodsDetails'];
     }
@@ -94,7 +116,7 @@ class KakasaCreditNote extends Model
         $invoice['oriInvoiceNo'] = $this->genInfo['oriInvoiceNo'];
         $invoice['reasonCode'] = $this->genInfo['reasonCode'];
         $invoice['reason'] = $this->genInfo['reason'];
-        $invoice['applicationTime'] = date_helper()->format(new DateTime(), 'Y-m-d H:i:s');
+        $invoice['applicationTime'] = Carbon::now()->format('Y-m-d H:i:s');
         $invoice['invoiceApplyCategoryCode'] = $this->genInfo['invoiceApplyCategoryCode'];
         $invoice['currency'] = $invoice['basicInformation']['currency'];
         $invoice['contactName'] = $invoice['sellerDetails']['businessName'];
@@ -127,7 +149,7 @@ class KakasaCreditNote extends Model
     {
         $invoice = $this->getEfrisInvoice();
         $localInvoiceDetails = $this->getLocalInvoiceDetails();
-        Logger::info(json_encode($invoice));
+        Log::info(json_encode($invoice));
         $productList = [];
 
         foreach ($this->_productServices as $productService) {
